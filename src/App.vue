@@ -281,54 +281,6 @@ const scanMusicDirectory = async () => {
 
     // Fallback: Demo tracks
     tracks.value = [
-      {
-        id: '1',
-        title: 'Drive',
-        artist: 'Ed Sheeran',
-        url: '../src/public/music/Drive.mp3'
-      },
-      {
-        id: '2',
-        title: 'Messy',
-        artist: 'Rose',
-        url: '../src/public/music/Messy.mp3'
-      },
-      {
-        id: '3',
-        title: 'Lose My Mind',
-        artist: 'Don Toliver',
-        url: '../src/public/music/Lose My Mind.mp3'
-      },
-      {
-        id: '4',
-        title: 'Just Keep Watching',
-        artist: 'Tate McRae',
-        url: '../src/public/music/Just Keep Watching.mp3'
-      },
-       {
-        id: '5',
-        title: 'Ferrari',
-        artist: 'SF-26',
-        url: '../src/public/music/Ferrari.mp3'
-      },
-      {
-        id: '6',
-        title: 'I am Rock',
-        artist: 'Need for speed Underground',
-        url: '../src/public/music/I Am Rock.mp3'
-      },
-      {
-        id: '7',
-        title: 'Styles of Beyond',
-        artist: 'Need for speed most wanted',
-        url: '../src/public/music/Styles of Beyond - Nine Thou - Need for Speed Most Wanted Soundtrack - 1080p.mp3'
-      },
-       {
-        id: '8',
-        title: 'Riders on the storm',
-        artist: 'Snoop dogg ft The Doors',
-        url: '../src/public/music/Riders on the Storm.mp3'
-      }
     ]
   } catch (err) {
     console.error('Failed to load music:', err)
