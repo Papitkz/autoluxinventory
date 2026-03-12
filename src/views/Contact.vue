@@ -277,14 +277,14 @@ const directContacts = [
   },
   {
     label: 'Phone',
-    value: '+1 (310) 555-0199',
+    value: '+63956-487-4933',
     href: 'tel:+13105550199',
     icon: 'mdi-phone',
     iconColor: 'text-emerald-400'
   },
   {
     label: 'WhatsApp',
-    value: '+1 (310) 555-0199',
+    value: '+63956-487-4933',
     href: 'https://wa.me/13105550199',
     icon: 'mdi-whatsapp',
     iconColor: 'text-green-400'

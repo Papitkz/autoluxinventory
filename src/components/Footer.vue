@@ -18,7 +18,7 @@
           </div>
           
           <p class="text-gray-500 text-sm leading-relaxed mb-8 max-w-sm font-light">
-            Curating the world's finest automobiles for the most discerning collectors. Precision, passion, perfection since 2009.
+            Curating the world's finest automobiles for the most discerning collectors. Precision, passion, perfection since 2026.
           </p>
 
           <!-- Social Grid -->
