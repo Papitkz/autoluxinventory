@@ -283,11 +283,10 @@
         </template>
       </div>
     </section>
-<!-- Dynamic Trending News Section -->
-<section class="trending-news py-16 lg:py-24 px-4 sm:px-6 lg:px-12 relative overflow-hidden">
+<!-- Market Activity Section - Replaces News -->
+<section class="market-activity py-16 lg:py-24 px-4 sm:px-6 lg:px-12 relative overflow-hidden">
   <!-- Background -->
-  <div class="news-bg-pattern absolute inset-0 opacity-30" />
-  <div class="news-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#c9a962]/5 rounded-full blur-3xl pointer-events-none" />
+  <div class="activity-bg-pattern absolute inset-0 opacity-20" />
   
   <div class="container mx-auto max-w-[1400px] relative z-10">
     <!-- Header -->
@@ -296,174 +295,232 @@
         <div class="flex items-center gap-3 mb-4">
           <div class="header-line w-12 h-px bg-gradient-to-r from-[#c9a962] to-transparent" />
           <span class="text-[10px] sm:text-xs tracking-[0.3em] uppercase text-[#c9a962] font-medium">
-            Automotive Intelligence
+            Market Pulse
           </span>
         </div>
         <h2 class="text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight">
-          Trending <span class="text-[#c9a962] italic font-serif">News</span>
+          Recent <span class="text-[#c9a962] italic font-serif">Activity</span>
         </h2>
+        <p class="text-gray-400 mt-3 text-sm lg:text-base max-w-lg">
+          Track our latest acquisitions and upcoming arrivals. Premium vehicles move quickly.
+        </p>
       </div>
       
       <!-- Live Indicator -->
       <div class="flex items-center gap-4">
-        <div class="live-ticker flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full">
+        <div class="live-indicator flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-full">
           <span class="relative flex h-2 w-2">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#c9a962] opacity-75" />
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#c9a962]" />
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
           </span>
-          <span class="text-xs text-gray-400 tracking-wider">LIVE FEED</span>
+          <span class="text-xs text-gray-400 tracking-wider">LIVE UPDATES</span>
         </div>
         
-        <button 
-          @click="refreshNews" 
-          :disabled="newsStore.loading"
-          class="p-2 border border-white/10 hover:border-[#c9a962]/50 hover:bg-[#c9a962]/5 transition-all disabled:opacity-50"
-          title="Refresh news"
+        <router-link 
+          to="/cars" 
+          class="hidden sm:flex items-center gap-2 px-4 py-2 border border-white/20 text-xs uppercase tracking-wider hover:bg-white hover:text-black transition-all"
         >
-          <v-icon 
-            icon="mdi-refresh" 
-            size="18" 
-            :class="{ 'animate-spin': newsStore.loading }"
-            class="text-gray-400 hover:text-[#c9a962]"
-          />
-        </button>
+          View Inventory
+          <v-icon icon="mdi-arrow-right" size="14" />
+        </router-link>
       </div>
     </div>
 
-    <!-- Loading State -->
-    <div v-if="newsStore.loading" class="flex justify-center items-center py-20">
-      <div class="flex flex-col items-center gap-4">
-        <div class="w-12 h-12 border-2 border-[#c9a962]/20 border-t-[#c9a962] animate-spin" />
-        <span class="text-xs text-gray-500 uppercase tracking-wider">Fetching latest updates...</span>
-      </div>
-    </div>
-
-    <!-- Error State -->
-    <div v-else-if="newsStore.error" class="text-center py-20 border border-white/5 bg-white/[0.02]">
-      <v-icon icon="mdi-alert-circle" size="48" class="text-red-500/50 mb-4" />
-      <p class="text-gray-400 mb-4">{{ newsStore.error }}</p>
-      <button 
-        @click="refreshNews"
-        class="px-6 py-2 border border-white/20 text-xs uppercase tracking-wider hover:bg-white hover:text-black transition-all"
-      >
-        Try Again
-      </button>
-    </div>
-
-    <!-- Content -->
-    <div v-else-if="newsStore.featuredArticle" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <!-- Featured Article -->
-      <article class="lg:col-span-7 group cursor-pointer" @click="openArticle(newsStore.featuredArticle.url)">
-        <div class="relative h-[400px] lg:h-[500px] overflow-hidden bg-gray-900">
-          <img 
-            :src="newsStore.featuredArticle.urlToImage || '/no-image.jpg'" 
-            :alt="newsStore.featuredArticle.title"
-            class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            @error="handleImageError"
-          />
-          <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-          
-          <!-- Source Badge -->
-          <div class="absolute top-6 left-6">
-            <span class="px-3 py-1 bg-[#c9a962] text-black text-[10px] font-bold uppercase tracking-wider">
-              {{ newsStore.featuredArticle.source.name }}
-            </span>
-          </div>
-          
-          <!-- Content -->
-          <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-10">
-            <div class="flex items-center gap-4 mb-4 text-xs text-gray-400">
-              <span class="flex items-center gap-1">
-                <v-icon icon="mdi-clock-outline" size="12" />
-                {{ newsStore.formatPublishedDate(newsStore.featuredArticle.publishedAt) }}
-              </span>
-              <span class="w-1 h-1 bg-gray-600 rounded-full" />
-              <span class="flex items-center gap-1">
-                <v-icon icon="mdi-open-in-new" size="12" />
-                External Link
+    <!-- Activity Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <!-- Featured: Just Sold -->
+      <div class="lg:col-span-5">
+        <div class="activity-card featured group cursor-pointer" @click="router.push('/cars')">
+          <div class="relative h-[300px] lg:h-full min-h-[400px] overflow-hidden">
+            <img 
+              src="https://images.unsplash.com/photo-1580274455191-1c62238fa333?w=800" 
+              alt="Recently Sold"
+              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+            
+            <!-- Sold Badge -->
+            <div class="absolute top-6 left-6">
+              <span class="px-3 py-1.5 bg-red-500/90 text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-2">
+                <v-icon icon="mdi-check-circle" size="12" />
+                Just Sold
               </span>
             </div>
-            <h3 class="text-2xl lg:text-3xl font-light mb-3 group-hover:text-[#c9a962] transition-colors line-clamp-3">
-              {{ newsStore.featuredArticle.title }}
-            </h3>
-            <p class="text-sm text-gray-400 line-clamp-2 mb-4 max-w-xl">
-              {{ newsStore.featuredArticle.description }}
-            </p>
-            <div class="flex items-center gap-2 text-[#c9a962] text-sm font-medium opacity-0 group-hover:opacity-100 transition-all transform translate-y-2 group-hover:translate-y-0">
-              <span>Read Full Story</span>
-              <v-icon icon="mdi-arrow-right" size="16" />
+            
+            <!-- Content -->
+            <div class="absolute bottom-0 left-0 right-0 p-6 lg:p-8">
+              <div class="flex items-center gap-3 mb-3 text-xs text-gray-400">
+                <span class="flex items-center gap-1">
+                  <v-icon icon="mdi-clock-outline" size="12" />
+                  2 hours ago
+                </span>
+                <span class="w-1 h-1 bg-gray-600 rounded-full" />
+                <span class="text-[#c9a962]">$285,000</span>
+              </div>
+              <h3 class="text-xl lg:text-2xl font-light mb-2">2023 Ferrari F8 Tributo</h3>
+              <p class="text-sm text-gray-400 mb-4">3.9L V8 Twin-Turbo • 710 HP • 2,400 miles</p>
+              
+              <div class="flex items-center gap-4">
+                <div class="flex -space-x-2">
+                  <div v-for="i in 3" :key="i" class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 border-2 border-black flex items-center justify-center text-[10px]">
+                    <v-icon icon="mdi-account" size="12" class="text-gray-400" />
+                  </div>
+                </div>
+                <span class="text-xs text-gray-500">4 interested buyers</span>
+              </div>
             </div>
           </div>
         </div>
-      </article>
+      </div>
 
-      <!-- Side Articles -->
-      <div class="lg:col-span-5 flex flex-col gap-4">
-        <article 
-          v-for="(article, index) in newsStore.sideArticles" 
-          :key="index"
-          class="group cursor-pointer flex gap-4 p-4 bg-white/[0.02] border border-white/5 hover:border-[#c9a962]/30 transition-all hover:bg-white/[0.04]"
-          @click="openArticle(article.url)"
-        >
-          <div class="w-32 h-24 lg:w-40 lg:h-28 flex-shrink-0 overflow-hidden bg-gray-800">
+      <!-- Side Cards -->
+      <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <!-- Incoming -->
+        <div class="activity-card group cursor-pointer" @click="showNotifyModal = true">
+          <div class="relative h-48 overflow-hidden">
             <img 
-              :src="article.urlToImage || '/no-image.jpg'" 
-              :alt="article.title"
+              src="https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?w=600" 
+              alt="Incoming"
               class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-              @error="handleImageError"
             />
-          </div>
-          <div class="flex flex-col justify-center min-w-0">
-            <span class="text-[10px] text-[#c9a962] uppercase tracking-wider mb-2">
-              {{ article.source.name }}
-            </span>
-            <h4 class="text-sm lg:text-base font-medium mb-2 line-clamp-2 group-hover:text-[#c9a962] transition-colors">
-              {{ article.title }}
-            </h4>
-            <div class="flex items-center gap-3 text-[10px] text-gray-500">
-              <span>{{ newsStore.formatPublishedDate(article.publishedAt) }}</span>
-              <span class="flex items-center gap-1">
-                <v-icon icon="mdi-open-in-new" size="10" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+            
+            <div class="absolute top-4 left-4">
+              <span class="px-2 py-1 bg-[#c9a962] text-black text-[10px] font-bold uppercase tracking-wider">
+                Arriving Soon
               </span>
             </div>
+            
+            <div class="absolute bottom-0 left-0 right-0 p-4">
+              <h4 class="font-medium mb-1">2024 Mercedes-AMG GT 63 S</h4>
+              <p class="text-xs text-gray-400">Expected: March 15</p>
+            </div>
           </div>
-        </article>
+          <div class="p-4 bg-white/[0.02] border border-white/5 border-t-0">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-gray-500">831 HP Hybrid</span>
+              <button class="text-[#c9a962] text-xs uppercase tracking-wider hover:underline">
+                Notify Me
+              </button>
+            </div>
+          </div>
+        </div>
 
-        <!-- More News Link -->
-        <a 
-          href="https://news.google.com/search?q=luxury+cars+automotive" 
-          target="_blank"
-          rel="noopener noreferrer"
-          class="mt-auto flex items-center justify-center gap-2 py-4 border border-white/10 hover:border-[#c9a962]/50 hover:bg-[#c9a962]/5 transition-all group/btn"
-        >
-          <span class="text-xs uppercase tracking-wider text-gray-400 group-hover/btn:text-[#c9a962]">More Automotive News</span>
-          <v-icon icon="mdi-arrow-right" size="14" class="text-gray-400 group-hover/btn:text-[#c9a962] transition-transform group-hover/btn:translate-x-1" />
-        </a>
+        <!-- Price Drop -->
+        <div class="activity-card group cursor-pointer" @click="router.push('/cars')">
+          <div class="relative h-48 overflow-hidden">
+            <img 
+              src="https://images.pexels.com/photos/34244269/pexels-photo-34244269.jpeg" 
+              alt="Price Drop"
+              class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
+            
+            <div class="absolute top-4 left-4">
+              <span class="px-2 py-1 bg-green-500/90 text-white text-[10px] font-bold uppercase tracking-wider flex items-center gap-1">
+                <v-icon icon="mdi-trending-down" size="10" />
+                Price Drop
+              </span>
+            </div>
+            
+            <div class="absolute bottom-0 left-0 right-0 p-4">
+              <h4 class="font-medium mb-1">2022 BMW M5 CS</h4>
+              <p class="text-xs text-gray-400">
+                <span class="line-through text-gray-600">$145,000</span>
+                <span class="text-[#c9a962] ml-2">$132,000</span>
+              </p>
+            </div>
+          </div>
+          <div class="p-4 bg-white/[0.02] border border-white/5 border-t-0">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-gray-500">627 HP • 8,200 miles</span>
+              <span class="text-xs text-red-400">-9% today</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- New Arrival -->
+        <div class="activity-card group cursor-pointer sm:col-span-2" @click="router.push('/cars')">
+          <div class="flex flex-col sm:flex-row">
+            <div class="relative w-full sm:w-48 h-48 sm:h-auto flex-shrink-0 overflow-hidden">
+              <img 
+                src="https://images.pexels.com/photos/36159652/pexels-photo-36159652.jpeg" 
+                alt="New Arrival"
+                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+              <div class="absolute inset-0 bg-gradient-to-r from-transparent to-black/50 sm:bg-gradient-to-l" />
+              
+              <div class="absolute top-4 left-4">
+                <span class="px-2 py-1 bg-blue-500/90 text-white text-[10px] font-bold uppercase tracking-wider">
+                  New Listing
+                </span>
+              </div>
+            </div>
+            
+            <div class="flex-1 p-4 sm:p-6 bg-white/[0.02] border border-white/5 border-t-0 sm:border-t sm:border-l-0 flex flex-col justify-center">
+              <div class="flex items-start justify-between mb-2">
+                <div>
+                  <h4 class="font-medium text-lg">2024 Porsche 911 Carrera GTS</h4>
+                  <p class="text-sm text-gray-400">T-Hybrid • 532 HP</p>
+                </div>
+                <span class="text-[#c9a962] font-semibold">$178,500</span>
+              </div>
+              
+              <p class="text-xs text-gray-500 mb-4 line-clamp-2">
+                First hybrid 911 with revolutionary eTurbo technology. Delivery miles only, factory warranty.
+              </p>
+              
+              <div class="flex items-center gap-4 mt-auto">
+                <div class="flex items-center gap-1 text-xs text-gray-500">
+                  <v-icon icon="mdi-eye" size="12" />
+                  234 views today
+                </div>
+                <div class="flex items-center gap-1 text-xs text-yellow-500">
+                  <v-icon icon="mdi-star" size="12" />
+                  Featured
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- Empty State -->
-    <div v-else class="text-center py-20 border border-white/5 bg-white/[0.02]">
-      <v-icon icon="mdi-newspaper-variant-outline" size="48" class="text-gray-600 mb-4" />
-      <p class="text-gray-400">No news available at the moment</p>
-    </div>
-
-    <!-- Trending Tags -->
-    <div class="mt-12 flex flex-wrap items-center gap-3">
-      <span class="text-xs text-gray-500 uppercase tracking-wider">Trending:</span>
-      <div class="flex flex-wrap gap-2">
-        <span 
-          v-for="tag in trendingTags" 
-          :key="tag" 
-          class="px-3 py-1 text-[10px] uppercase tracking-wider bg-white/5 border border-white/10 text-gray-300 hover:border-[#c9a962]/50 hover:text-[#c9a962] cursor-pointer transition-colors"
-          @click="searchByTag(tag)"
-        >
-          {{ tag }}
-        </span>
+    <!-- Quick Stats Row -->
+    <div class="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-8 border-t border-white/10 pt-8">
+      <div v-for="stat in activityStats" :key="stat.label" class="text-center group cursor-default">
+        <div class="text-2xl lg:text-3xl font-light text-white mb-1 group-hover:text-[#c9a962] transition-colors">{{ stat.value }}</div>
+        <div class="text-[10px] uppercase tracking-wider text-gray-500">{{ stat.label }}</div>
       </div>
     </div>
   </div>
 </section>
+
+<!-- Notify Me Modal (Simple) -->
+<Transition name="fade">
+  <div v-if="showNotifyModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" @click.self="showNotifyModal = false">
+    <div class="bg-[#18181b] border border-white/10 p-6 lg:p-8 max-w-md w-full">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-light">&nbsp;Get Notified</h3>
+        <button @click="showNotifyModal = false" class="text-gray-400 hover:text-white">
+          <v-icon icon="mdi-close" size="24" />
+        </button>
+      </div>
+      <p class="text-gray-400 text-sm mb-6">&nbsp;&nbsp;We'll notify you when the 2024 Mercedes-AMG GT 63 S arrives.</p>
+      <input 
+        type="email" 
+        placeholder="Enter your email"
+        class="w-full bg-white/5 border border-white/10 px-4 py-3 text-sm mb-4 focus:border-[#c9a962] outline-none transition-colors"
+      />
+      <button 
+        @click="showNotifyModal = false"
+        class="w-full bg-[#c9a962] text-black py-3 text-sm font-semibold uppercase tracking-wider hover:bg-white transition-colors"
+      >
+        Notify Me
+      </button>
+    </div>
+  </div>
+</Transition>
 <!-- Experience Section - Enhanced Premium Design -->
 <section class="experience py-16 lg:py-32 relative overflow-hidden">
   <!-- Animated Background -->
@@ -771,6 +828,14 @@ const brandLogos = [
     name: 'Rolls-Royce', 
     logo: 'https://icon2.cleanpng.com/20180716/rez/kisspng-rolls-royce-holdings-plc-rolls-royce-phantom-vii-r-rolls-royce-logo-5b4c4d1bc0db54.70692860153172713179.jpg'
   }
+]
+const showNotifyModal = ref(false)
+
+const activityStats = [
+  { value: "12", label: "Sold This Week" },
+  { value: "8", label: "Arriving Soon" },
+  { value: "3", label: "Price Drops" },
+  { value: "24h", label: "Avg. Time to Sale" }
 ]
 
 const needleRotation = computed(() => {
@@ -2710,5 +2775,57 @@ article {
   &:hover::before {
     opacity: 1;
   }
+}
+// Market Activity Styles
+.market-activity {
+  background: linear-gradient(180deg, #0a0a0a 0%, #09090b 100%);
+  position: relative;
+}
+
+.activity-bg-pattern {
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(201,169,98,0.03) 1px, transparent 0);
+  background-size: 30px 30px;
+}
+
+.activity-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  &:hover {
+    border-color: rgba(201,169,98,0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  }
+  
+  &.featured {
+    border-color: rgba(201,169,98,0.1);
+    
+    &:hover {
+      border-color: rgba(201,169,98,0.3);
+    }
+  }
+}
+
+.live-indicator {
+  animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+  0%, 100% { border-color: rgba(255,255,255,0.1); }
+  50% { border-color: rgba(34,197,94,0.3); }
+}
+
+// Modal transition
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
