@@ -13,7 +13,7 @@ export const useNewsStore = defineStore('news', () => {
   const sideArticles = computed(() => articles.value.slice(1, 4) || [])
 
   const fetchNews = async (forceRefresh: boolean = false) => {
-    // Cache for 15 minutes to avoid API limits
+    // Cache for 15 minutes to respect API limits
     if (!forceRefresh && lastFetched.value) {
       const minutesSinceLastFetch = (Date.now() - lastFetched.value.getTime()) / 1000 / 60
       if (minutesSinceLastFetch < 15) return
@@ -27,8 +27,8 @@ export const useNewsStore = defineStore('news', () => {
       articles.value = news
       lastFetched.value = new Date()
     } catch (err) {
-      error.value = 'Failed to load news'
       console.error(err)
+      error.value = 'Failed to load news'
     } finally {
       loading.value = false
     }
@@ -40,7 +40,7 @@ export const useNewsStore = defineStore('news', () => {
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
     
     if (diffInHours < 1) return 'Just now'
-    if (diffInHours < 24) return `${diffInHours} hours ago`
+    if (diffInHours < 24) return `${diffInHours}h ago`
     if (diffInHours < 48) return 'Yesterday'
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }
